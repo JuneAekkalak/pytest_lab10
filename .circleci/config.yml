@@ -8,13 +8,13 @@ jobs:
   build-and-test:
     executor:
       name: python/default
-      tag: "3.7"
+      tag: "3.8"
     steps:
       - checkout
       - run:
           name: Setup Virtual env
           command: |
-            virtualenv -p python3.7 env
+            virtualenv -p python3.8 env
             echo "source ./env/bin/activate" >> $BASH_ENV
       - run:
           name: Install Dependencies
@@ -32,7 +32,7 @@ jobs:
             zip -r9 ../../../../function.zip .
       - run:
           name: Add App to Zipfile
-          command: zip -g ./function.zip .env -r app
+          command: cd ./app && zip -g ../function.zip -r .
       - persist_to_workspace:
           root: .
           paths:
@@ -49,7 +49,7 @@ jobs:
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
       - run:
           name: Upload to S3
-          command: aws s3 cp function.zip s3://tumpk/function.zip
+          command: aws s3 cp function.zip s3://aekkalak/function.zip
       - run:
           name: Deploy new Lambda
           command: aws lambda update-function-code --function-name fastapi --s3-bucket tumpk --s3-key function.zip
